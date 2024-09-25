@@ -71,6 +71,16 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
     return(probabilities)
   }
   probabilities <- compute_probabilities(X, beta)
+  #Objective value
+  compute_objective <- function(X, y_adj, beta, lambda) {
+    probabilities <- compute_probabilities(X, beta)
+    nll <- -sum(log(probabilities[cbind(1:nrow(X), y_adj)]))
+    reg <- (lambda / 2) * sum(beta ^ 2)
+    return(nll + reg)
+  }
+  
+  objective <- numeric(numIter + 1)
+  objective[1] <- compute_objective(X, y_adj, beta, lambda)
   ## Newton's method cycle - implement the update EXACTLY numIter iterations
   ##########################################################################
  
