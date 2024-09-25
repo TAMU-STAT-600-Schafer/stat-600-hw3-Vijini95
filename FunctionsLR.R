@@ -58,7 +58,19 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
   }
   ## Calculate corresponding pk, objective value f(beta_init), training error and testing error given the starting point beta_init
   ##########################################################################
-  
+  compute_probabilities <- function(X, beta) {
+    #Compute linear scores for each class
+    linear_scores <- X %*% beta
+    # Compute the exponentials
+    exp_scores <- exp(linear_scores)
+    # Compute the sum over classes for each sample
+    sum_exp_scores <- rowSums(exp_scores)
+    # Compute probabilities by dividing exponentials by the sum
+    probabilities <- exp_scores / sum_exp_scores
+    # Now, probabilities[i, k] = p_k(x_i; beta)
+    return(probabilities)
+  }
+  probabilities <- compute_probabilities(X, beta)
   ## Newton's method cycle - implement the update EXACTLY numIter iterations
   ##########################################################################
  
