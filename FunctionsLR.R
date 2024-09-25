@@ -35,7 +35,9 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
     stop("Number of rows in Xt must be same with length of yt")
   }
   # Check for compatibility of dimensions between X and Xt
-  
+  if (ncol(X) != ncol(Xt)) {
+    stop("Number of columns in X and Xt must be the same")
+  }
   # Check eta is positive
   
   # Check lambda is non-negative
