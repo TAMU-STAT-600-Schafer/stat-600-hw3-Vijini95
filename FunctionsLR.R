@@ -27,7 +27,9 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
     stop("The first column of Xt must be all one")
   }
   # Check for compatibility of dimensions between X and Y
-  
+  if (nrow(X) != length(y)) {
+    stop("Number of rows in X must be same with length of y")
+  }
   # Check for compatibility of dimensions between Xt and Yt
   
   # Check for compatibility of dimensions between X and Xt
