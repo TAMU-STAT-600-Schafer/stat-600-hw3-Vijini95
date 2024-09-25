@@ -39,7 +39,9 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
     stop("Number of columns in X and Xt must be the same")
   }
   # Check eta is positive
-  
+  if (eta <= 0) {
+    stop("eta must be positive.")
+  }
   # Check lambda is non-negative
   
   # Check whether beta_init is NULL. If NULL, initialize beta with p x K matrix of zeroes. If not NULL, check for compatibility of dimensions with what has been already supplied.
