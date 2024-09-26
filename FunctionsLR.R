@@ -20,7 +20,7 @@ compute_objective <- function(X, y_adj, beta, lambda) {
 #Prediction
 predict_classes <- function(X, beta) {
   probabilities <- compute_probabilities(X, beta)
-  predicted_classes <- max.col(probabilities)  
+  predicted_classes <- max.col(probabilities)
   return(predicted_classes)
 }
 
@@ -34,7 +34,7 @@ predict_classes <- function(X, beta) {
 # numIter - number of FIXED iterations of the algorithm, default value is 50
 # eta - learning rate, default value is 0.1
 # lambda - ridge parameter, default value is 1
-# beta_init - (optional) initial starting values of beta for the algorithm, should be p x K matrix 
+# beta_init - (optional) initial starting values of beta for the algorithm, should be p x K matrix
 
 ## Return output
 ##########################################################################
@@ -43,6 +43,7 @@ predict_classes <- function(X, beta) {
 # error_test - (numIter + 1) length vector of testing error % at each iteration (+ starting value)
 # objective - (numIter + 1) length vector of objective values of the function that we are minimizing at each iteration (+ starting value)
 LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta_init = NULL){
+  
   ## Check the supplied parameters as described. You can assume that X, Xt are matrices; y, yt are vectors; and numIter, eta, lambda are scalars. You can assume that beta_init is either NULL (default) or a matrix.
   ###################################
   # Check that the first column of X and Xt are 1s, if not - display appropriate message and stop execution.
@@ -107,8 +108,44 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
   ##########################################################################
   
   # Within one iteration: perform the update, calculate updated objective function and training/testing errors in %
-  
-  
+  for (iter in 1:numIter) {
+    # Compute probabilities for current beta
+    probabilities <- compute_probabilities(X, beta)
+    
+    # Initialize gradient and Hessian matrices
+    gradients <- matrix(0, nrow = ncol(X), ncol = K)
+    hessians <- list()
+    
+    # Loop over each class
+    for (k in 1:K) {
+      # Compute gradient for class k
+      indicator <- as.numeric(y_adj == k)
+      p_k <- probabilities[, k]
+      grad_k <- t(X) %*% (p_k - indicator) + lambda * beta[, k]
+      
+      # Compute Hessian for class k without storing Wk
+      w_k <- p_k * (1 - p_k)  # n x 1 vector
+      X_weighted <- X * w_k  # Element-wise multiplication
+      H_k <- t(X) %*% X_weighted + lambda * diag(ncol(X))
+      
+      # Solve for delta_beta_k
+      delta_beta_k <- solve(H_k, grad_k)
+      
+      # Update beta_k
+      beta[, k] <- beta[, k] - eta * delta_beta_k
+    }
+    
+    # Compute objective value at new beta
+    objective[iter + 1] <- compute_objective(X, y_adj, beta, lambda)
+    
+    # Compute training error
+    predicted_train <- predict_classes(X, beta)
+    error_train[iter + 1] <- mean(predicted_train != y_adj) * 100
+    
+    # Compute testing error
+    predicted_test <- predict_classes(Xt, beta)
+    error_test[iter + 1] <- mean(predicted_test != yt_adj) * 100
+  }
   
   ## Return output
   ##########################################################################
