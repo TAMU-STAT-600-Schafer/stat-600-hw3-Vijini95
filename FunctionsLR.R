@@ -1,3 +1,29 @@
+compute_probabilities <- function(X, beta) {
+  #Compute linear scores for each class
+  linear_scores <- X %*% beta
+  # Compute the exponentials
+  exp_scores <- exp(linear_scores)
+  # Compute the sum over classes for each sample
+  sum_exp_scores <- rowSums(exp_scores)
+  # Compute probabilities by dividing exponentials by the sum
+  probabilities <- exp_scores / sum_exp_scores
+  # Now, probabilities[i, k] = p_k(x_i; beta)
+  return(probabilities)
+}
+#Objective value
+compute_objective <- function(X, y_adj, beta, lambda) {
+  probabilities <- compute_probabilities(X, beta)
+  nll <- -sum(log(probabilities[cbind(1:nrow(X), y_adj)]))
+  reg <- (lambda / 2) * sum(beta ^ 2)
+  return(nll + reg)
+}
+#Prediction
+predict_classes <- function(X, beta) {
+  probabilities <- compute_probabilities(X, beta)
+  predicted_classes <- max.col(probabilities)  
+  return(predicted_classes)
+}
+
 # Function that implements multi-class logistic regression.
 #############################################################
 # Description of supplied parameters:
@@ -58,36 +84,15 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
   }
   ## Calculate corresponding pk, objective value f(beta_init), training error and testing error given the starting point beta_init
   ##########################################################################
-  compute_probabilities <- function(X, beta) {
-    #Compute linear scores for each class
-    linear_scores <- X %*% beta
-    # Compute the exponentials
-    exp_scores <- exp(linear_scores)
-    # Compute the sum over classes for each sample
-    sum_exp_scores <- rowSums(exp_scores)
-    # Compute probabilities by dividing exponentials by the sum
-    probabilities <- exp_scores / sum_exp_scores
-    # Now, probabilities[i, k] = p_k(x_i; beta)
-    return(probabilities)
-  }
-  probabilities <- compute_probabilities(X, beta)
-  #Objective value
-  compute_objective <- function(X, y_adj, beta, lambda) {
-    probabilities <- compute_probabilities(X, beta)
-    nll <- -sum(log(probabilities[cbind(1:nrow(X), y_adj)]))
-    reg <- (lambda / 2) * sum(beta ^ 2)
-    return(nll + reg)
-  }
+  y_adj <- y + 1
+  yt_adj <- yt + 1
   
+  #Calculate corresponding pk
+  probabilities <- compute_probabilities(X, beta)
+  
+  #Calculate objective value
   objective <- numeric(numIter + 1)
   objective[1] <- compute_objective(X, y_adj, beta, lambda)
-  
-  #Prediction
-  predict_classes <- function(X, beta) {
-    probabilities <- compute_probabilities(X, beta)
-    predicted_classes <- max.col(probabilities)  
-    return(predicted_classes)
-  }
   
   #Compute Training Error:
   predicted_train <- predict_classes(X, beta)
@@ -100,8 +105,9 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
   error_test[1] <- mean(predicted_test != yt_adj) * 100
   ## Newton's method cycle - implement the update EXACTLY numIter iterations
   ##########################################################################
- 
+  
   # Within one iteration: perform the update, calculate updated objective function and training/testing errors in %
+  
   
   
   ## Return output
