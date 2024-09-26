@@ -73,6 +73,8 @@ out32 <- LRMultiClass(X, Y, Xt, Yt, numIter = 50, eta = 0.1, lambda = 0.5, beta_
 #If decrease the value of lambda then errors, objective value converges to a minimum value
 
 # [ToDo] Use microbenchmark to time your code with lambda=1 and 50 iterations. To save time, only apply microbenchmark 5 times.
+time <- microbenchmark(LRMultiClass(X, Y, Xt, Yt, numIter = 50, eta = 0.1, lambda = 1, beta_init = NULL), times = 5)
 
 # [ToDo] Report the median time of your code from microbenchmark above in the comments below
+# Median time: 3.36693 (in sec)
 
