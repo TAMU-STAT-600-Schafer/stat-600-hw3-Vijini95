@@ -93,6 +93,11 @@ LRMultiClass <- function(X, y, Xt, yt, numIter = 50, eta = 0.1, lambda = 1, beta
   predicted_train <- predict_classes(X, beta)
   error_train <- numeric(numIter + 1)
   error_train[1] <- mean(predicted_train != y_adj) * 100
+  
+  #Compute Testing Error:
+  predicted_test <- predict_classes(Xt, beta)
+  error_test <- numeric(numIter + 1)
+  error_test[1] <- mean(predicted_test != yt_adj) * 100
   ## Newton's method cycle - implement the update EXACTLY numIter iterations
   ##########################################################################
  
