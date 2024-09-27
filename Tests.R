@@ -30,3 +30,36 @@ plot(0:numIter, objective_values, type = 'b', xlab = 'Iteration', ylab = 'Object
 
 # Plot error_train values
 plot(0:numIter, error_train, type = 'b', xlab = 'Iteration', ylab = 'Objective Function Value', main = 'Objective Function over Iterations')
+
+######################################################################
+#use two normal populations
+# Set seed for reproducibility
+set.seed(123)
+n_samples <- 100 # Number of samples per class
+p <- 2 # Number of features (excluding intercept)
+
+# Generate data for class 0
+X0 <- matrix(rnorm(n_samples * p, mean = -2, sd = 1), n_samples, p)
+
+# Generate data for class 1
+X1 <- matrix(rnorm(n_samples * p, mean = 2, sd = 1), n_samples, p)
+X <- rbind(X0, X1) # Combine the data
+# Add intercept term
+X <- cbind(1, X)  # Now X has p + 1 columns 
+y <- c(rep(0, n_samples), rep(1, n_samples)) # Create labels
+
+# Split data into training and testing sets
+set.seed(456)  # Different seed for splitting
+train_indices <- sample(1:(2 * n_samples), size = n_samples)
+test_indices <- setdiff(1:(2 * n_samples), train_indices)
+
+X_train <- X[train_indices, ]
+y_train <- y[train_indices]
+
+X_test <- X[test_indices, ]
+y_test <- y[test_indices]
+
+result1 <- LRMultiClass(X_train, y_train, X_test, y_test, numIter = 50, eta = 0.1, lambda = 1)
+#objective value = 2.275099
+plot(result1$objective, type = 'o')
+
