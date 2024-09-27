@@ -63,3 +63,14 @@ result1 <- LRMultiClass(X_train, y_train, X_test, y_test, numIter = 50, eta = 0.
 #objective value = 2.275099
 plot(result1$objective, type = 'o')
 
+#######################################################################
+#increase number of iterations
+result2 <- LRMultiClass(X_train, y_train, X_test, y_test, numIter = 100, eta = 0.1, lambda = 1)
+#objective value = 2.275072
+plot(result2$objective, type = 'o')
+#decrease number of iterations
+result3 <- LRMultiClass(X_train, y_train, X_test, y_test, numIter = 10, eta = 0.1, lambda = 1)
+#objective value = 9.629257
+plot(result3$objective, type = 'o')
+#if the number of iteration is increasing, objective function value is decreasing.
+
