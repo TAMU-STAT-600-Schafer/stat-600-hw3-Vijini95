@@ -74,3 +74,14 @@ result3 <- LRMultiClass(X_train, y_train, X_test, y_test, numIter = 10, eta = 0.
 plot(result3$objective, type = 'o')
 #if the number of iteration is increasing, objective function value is decreasing.
 
+######################################################
+#classification error change across iterations
+numIter<-50
+plot(0:numIter, result1$error_train, type = 'b', col = 'blue',
+     ylim = c(0, max(result1$error_train, result1$error_test)),
+     xlab = 'Iteration', ylab = 'Classification Error (%)',
+     main = 'Classification Error over Iterations')
+lines(0:numIter, result1$error_test, type = 'b', col = 'red')
+legend('topright', legend = c('Training Error', 'Testing Error'),
+       col = c('blue', 'red'), lty = 1, pch = 1)
+
